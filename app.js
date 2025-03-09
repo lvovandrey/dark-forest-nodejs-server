@@ -3,18 +3,31 @@ require('dotenv').config()
 const raceStore = require('./races')
 const bodyParser = require('body-parser')
 const cors = require('cors')
+const authRouter = require('./authRouter');
+const middlewareAuth = require("./middlewareAuth");
+
 
 const app = express();
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use('/auth', authRouter)
 
 app.set('port', process.env.PORT || 8088)
 
-app.get("/races", (req, res, next) => {
+
+function sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  }
+
+app.get("/races", async (req, res, next) => {
     const page = req.query.page || 1
     const pageSize = req.query.pageSize || 3
     
+    await sleep(500);
+
     let firstIndex = (page-1)*pageSize
     let lastIndex = page*pageSize
     let arr = raceStore.races.slice(firstIndex, lastIndex) 
@@ -24,7 +37,7 @@ app.get("/races", (req, res, next) => {
     });
 });
 
-app.post("/races", (req, res, next) => {
+app.post("/races", middlewareAuth, (req, res, next) => {
     const race = req.body;
     let maxId = Math.max(...raceStore.races.map(r => r.id))
     race.id = ++maxId
