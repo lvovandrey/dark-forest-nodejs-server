@@ -1,6 +1,7 @@
 const { users } = require("./users")
 const jwt = require('jsonwebtoken');
-const { Secret_key } = require("./config")
+const { Secret_key } = require("./config");
+const { sleep } = require("./tools");
 
 
 const generateAccessToken = (userId, username) => {
@@ -32,6 +33,8 @@ class authController {
 
     async tryGetUser(req, res) {
         try {
+
+            await sleep(300)
             const token = req.headers.authorization.split(' ')[1]
             if (!!token === false)
                 throw new Error("Token not found");

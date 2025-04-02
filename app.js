@@ -6,6 +6,7 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const authRouter = require('./authRouter');
 const middlewareAuth = require("./middlewareAuth");
+const { sleep } = require("./tools");
 
 
 const app = express();
@@ -16,12 +17,6 @@ app.use('/auth', authRouter)
 
 app.set('port', process.env.PORT || 8088)
 
-
-function sleep(ms) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, ms);
-    });
-}
 
 app.get("/races", async (req, res, next) => {
     const page = req.query.page || 1
@@ -93,8 +88,6 @@ app.put("/races/:id", (req, res, next) => {
             })
         }
     })
-
-
 });
 
 app.get('/races/:id', (req, res, next) => {
